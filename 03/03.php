@@ -3,23 +3,25 @@
 $banks = explode(PHP_EOL, file_get_contents('input'));
 $banks = array_map(str_split(...), $banks);
 
-function largest_joltage($bank) {
+function joltage($length) : callable {
 
-    arsort($bank);
-    $highest = array_slice($bank, 0, 1, true);
-    ksort($bank);
+    return function ($bank) use ($length) : int {
 
-    if (array_key_first($highest) + 1 === count($bank)) {
-        $right = array_pop($bank);
-        $left = max($bank);
-    }
+        $joltage = [];
 
-    else {
-        $right = max(array_slice($bank, array_key_first($highest) + 1));
-        $left = reset($highest);
-    }
+        while ($battery = array_shift($bank)) {
+            while (end($joltage) < $battery && !empty($joltage) && count($joltage) + count($bank) > $length - 1) {
+                array_pop($joltage);
+            }
 
-    return $left . $right;
+            if (count($joltage) < $length) {
+                $joltage[] = $battery;
+            }
+        }
+
+        return (int)join($joltage);
+    };
 }
 
-echo array_sum(array_map(largest_joltage(...), $banks)).PHP_EOL;
+echo array_sum(array_map(joltage(2), $banks)).PHP_EOL;
+echo array_sum(array_map(joltage(12), $banks)).PHP_EOL;
