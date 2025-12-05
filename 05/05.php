@@ -13,7 +13,7 @@ $ranges = array_map(fn ($range) => explode('-', $range), $ranges);
 
 $fresh = 0;
 foreach ($ingredients as $ingredient) {
-    if (array_reduce($ranges, fn ($found, $range) => $found || in_range($ingredient, $range), false)) {
+    if (array_any($ranges, fn ($range) => in_range($ingredient, $range))) {
         $fresh++;
     }
 }
